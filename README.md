@@ -1,4 +1,4 @@
-# 📊 동영상 광고 & 클립인벤토리 관리 시스템
+# 📊 동영상 광고 & 매체별 인벤토리 관리 시스템
 
 <div align="center">
 
@@ -14,18 +14,18 @@
 **Role**: Project Lead (PL) & Lead Developer  
 **Responsibilities**: 
 - 전체 시스템 아키텍처 설계 및 기술 스택 선정
-- 핵심 비즈니스 로직 설계 및 구현 (코드 기여도 60%+)
+- 핵심 비즈니스 로직 설계 및 구현 (코드 기여도 70%+)
 - 팀 리딩 및 코드 리뷰
 
 ---
 
 ## 🎯 Project Overview
 
-멀티 플랫폼 동영상 광고 캠페인의 **기획 → 집행 → 모니터링**까지 전 생애주기를 관리하는 엔터프라이즈급 광고 운영 플랫폼입니다.
+여러 매체에 동영상 광고 집행을 위한, 캠페인의 **기획 → 집행 → 모니터링** , 전체 생애주기를 관리하는 엔터프라이즈급 광고 운영 플랫폼
 
 ### Core Capabilities
 - 📊 **Campaign Management** - 다중 플랫폼 캠페인 통합 관리 및 실시간 모니터링
-- 📦 **Inventory System** - 일별/플랫폼별 인벤토리 자동 분배 및 차감
+- 📦 **Inventory System** - 일별/매체별 인벤토리 자동 분배 및 차감
 - 🎯 **Targeting Engine** - 프로그램/채널/키워드 기반 정교한 타겟팅
 - 📈 **Excel Integration** - 광고 제안서 자동 생성 (MediaMix, 타겟팅 시트)
 - 🔄 **Purchase Workflow** - 트랜잭션 기반 안전한 광고 구매 프로세스
@@ -67,6 +67,12 @@ mysqlclient        # Native MySQL Driver
 django-cors-headers # CORS 처리
 ```
 
+### Infra
+
+```
+AWS             - EC2, S3, Route53
+```
+
 ---
 
 ## 🏗 System Architecture
@@ -77,14 +83,14 @@ django-cors-headers # CORS 처리
 │         Presentation Layer          │
 │   (Django Templates + JavaScript)   │
 ├─────────────────────────────────────┤
-│          View Layer (CBV)           │
+│             View Layer              │
 │   - Dashboard, Campaign, Inventory  │
 ├─────────────────────────────────────┤
 │            Service Layer            │
 │   - CampaignPurchaseService         │
 │   - CampaignUnitStatusAggregator    │
 │   - ExcelService                    │
-│   - CampaignCancelService           │
+│   - MakeInventoryFromForecast       │
 ├─────────────────────────────────────┤
 │          Model Layer (ORM)          │
 │   - Campaign, CampaignUnit, Ad      │
@@ -94,29 +100,14 @@ django-cors-headers # CORS 처리
 └─────────────────────────────────────┘
 ```
 
-### 2. Service Layer Pattern (핵심 설계)
-복잡한 비즈니스 로직을 Service 클래스로 분리하여 관리
-
-```python
-# services/campaign_purchase_service.py (123KB)
-class CampaignPurchaseService:
-    """
-    캠페인 구매 프로세스 통합 관리
-    - 트랜잭션 처리
-    - 인벤토리 검증 및 차감
-    - 계층적 엔티티 생성 (Unit → Ad → ChildAd)
-    - 3단계 분배 로직
-    """
-```
-
-### 3. Key Services
+### 2. Key Services
 
 | Service | Size | Description |
 |---------|------|-------------|
-| `campaign_purchase_service.py` | 123KB | 캠페인 구매 프로세스 전체 관리 |
+| `make_inventory_from_forecast_data.py` | 83KB | 매체별 일별 프로그램별 인벤토리 예측치, 판매가능 상품 인벤토리 변환 |
+| `campaign_purchase_service.py` | 123KB | 캠페인 구매 및 차감 프로세스 전체 관리 |
 | `excel_service.py` | 35KB | 복잡한 Excel 제안서 생성 |
 | `campaign_unit_status_aggregator.py` | 8KB | 광고 상태 집계 및 동기화 |
-| `campaign_cancel_service.py` | 14KB | 캠페인 취소 및 롤백 처리 |
 
 ---
 
@@ -127,23 +118,21 @@ class CampaignPurchaseService:
 **3단계 분배 시스템**
 ```python
 구매금액 (100%)
-  ├─ 플랫폼별 분배 (균등 비율)
-  │   ├─ Platform A: 33.33%
-  │   ├─ Platform B: 33.33%
-  │   └─ Platform C: 33.34% (나머지 할당)
-  │
-  ├─ 타겟팅그룹별 분배 (가중치 비율)
-  │   ├─ Group 1: 40%
-  │   ├─ Group 2: 35%
-  │   └─ Group 3: 25%
-  │
-  └─ CO별 분배 (비율 설정)
-      ├─ CO A: 60%
-      └─ CO B: 40%
+  └─ 플랫폼별 분배 (균등 비율)
+      ├─ Platform A: 33.33%
+      ├─ Platform B: 33.33%
+      └─ Platform C: 33.34% (나머지 할당)
+          ├─ 타겟팅그룹별 분배 (가중치 비율)
+          ├─ Group 1: 40%
+          ├─ Group 2: 35%
+          └─ Group 3: 25%
+              └─ CO별 분배 (비율 설정)
+              ├─ CO A: 60%
+              └─ CO B: 40%
 ```
 
 **핵심 로직**
-- `_distribute_with_remainder()` 함수로 모든 분배 통일
+- 사용자의 구매 인벤토리를 구매상품 특성에 따라 세부적으로 분리하여 정교한 인벤토리 관리 및 타겟팅 운영
 - 나머지 처리를 통한 정확한 100% 분배
 - 소수점 오차 방지 알고리즘
 
@@ -189,24 +178,7 @@ def process_campaign_purchase(self):
 - Savepoint 활용한 부분 롤백
 - 계층적 결과 출력으로 디버깅 용이
 
-### 4. 상태 집계 시스템
-
-**하위 광고 상태의 우선순위 기반 집계**
-```python
-우선순위 (높음 → 낮음)
-1. ACTIVE        → PUBLISH_ACTIVE      (게재중)
-2. SCHEDULED     → PUBLISH_CREATED     (게재대기)
-3. PAUSED        → PUBLISH_PAUSED      (게재중지)
-4. COMPLETED     → PUBLISH_COMPLETED   (게재완료)
-5. CANCELED      → PUBLISH_CANCELED    (게재취소)
-```
-
-**최적화**
-- 단일 광고 기반 실시간 업데이트
-- 배치 처리 (N일 이내 수정된 캠페인)
-- 상태 변경 시에만 DB 업데이트
-
-### 5. 인벤토리 데이터 변환 파이프라인
+### 4. 인벤토리 데이터 변환 파이프라인
 
 **외부 데이터 → 판매 인벤토리 자동 전환**
 
@@ -219,7 +191,7 @@ ForecastInventoryData (외부 제공)
   ├─ 변화율 자동 계산
   └─ Bulk Create/Update (2000건 청크)
   ↓
-StandardInventoryData (표준 인벤토리)
+StandardInventoryData (표준 인벤토리 전환 -> 판매 전, 수동 보정 및 확인을 위한 중간데이터)
   ↓
 [process_unit_inventory_load]
   ├─ Forecast 비율 기반 일별 분배
@@ -227,7 +199,7 @@ StandardInventoryData (표준 인벤토리)
   ├─ 플랫폼별 인벤토리 생성
   └─ Raw SQL Upsert (최적화)
   ↓
-UnitInventoryData (판매 가능 인벤토리)
+UnitInventoryData (운영자가 시스템내에서 직접 만든 광고상품에 인벤토리가 부여됨)
 ```
 
 **핵심 알고리즘**
@@ -441,43 +413,6 @@ curl http://localhost/health
 
 ---
 
-## 📁 Project Structure
-
-```
-smap-manager/
-├── smap/
-│   ├── smapadmin/              # Core admin application
-│   │   ├── models/             # 56 model files
-│   │   ├── views/              # 56 view modules
-│   │   │   ├── dashboard/      # 대시보드
-│   │   │   ├── campaign/       # 캠페인 관리
-│   │   │   ├── inventory/      # 인벤토리 관리
-│   │   │   └── targeting_group/ # 타겟팅
-│   │   ├── services/           # 핵심 비즈니스 로직
-│   │   │   ├── campaign_purchase_service.py (123KB)
-│   │   │   ├── excel_service.py (35KB)
-│   │   │   ├── campaign_unit_status_aggregator.py
-│   │   │   └── campaign_cancel_service.py
-│   │   ├── management/         # Django Management Commands
-│   │   │   └── commands/
-│   │   │       ├── process_standard_inventory_load.py
-│   │   │       └── process_unit_inventory_load.py
-│   │   ├── forms/              # Form classes
-│   │   └── utils/              # Utility functions
-│   ├── smapapi/                # REST API
-│   ├── smapfront/              # Frontend views
-│   ├── static/                 # Static assets
-│   └── templates/              # Django templates
-├── server_files/               # Server configs
-│   ├── etc/nginx/              # Nginx configuration
-│   └── run.sh                  # Startup script
-├── Dockerfile                  # Production build
-├── requirements.txt            # Python dependencies
-└── crontab                     # Scheduled tasks
-```
-
----
-
 ## 🎓 Technical Challenges Overcome
 
 ### 1. 복잡한 분배 알고리즘 설계
@@ -518,21 +453,6 @@ smap-manager/
   - 상태 플래그로 동시 실행 방지
 
 **성과**: 수만 건의 데이터를 10-30초 내 안정적으로 처리
-
----
-
-## 📊 Code Metrics
-
-| Metric | Value |
-|--------|-------|
-| **Total Models** | 56 Python files |
-| **Total Views** | 56 modules |
-| **Service Classes** | 4 major services |
-| **Management Commands** | 2 data pipeline commands |
-| **Lines of Code (Services)** | ~5,000+ lines |
-| **Lines of Code (Commands)** | ~800+ lines |
-| **Database Tables** | 60+ tables |
-| **API Endpoints** | 100+ routes |
 
 ---
 
@@ -601,7 +521,6 @@ smap-manager/
 
 - 이 프로젝트는 실제 운영 중인 상용 시스템입니다
 - 민감한 정보는 제외하고 기술적 내용만 공개합니다
-- 추가 정보가 필요하시면 별도 문의 부탁드립니다
 
 ---
 
