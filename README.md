@@ -15,6 +15,9 @@
 **Responsibilities**: 
 - 전체 시스템 아키텍처 설계 및 기술 스택 선정
 - 핵심 비즈니스 로직 설계 및 구현 (코드 기여도 70%+)
+   ㄴ 매체별 예측 인벤토리 관리 및 판매인벤토리 전환
+   ㄴ 캠페인 구매 및 실제 광고 운영 데이터 세팅
+   ㄴ 외부연동 API 개발
 - 팀 리딩 및 코드 리뷰
 
 ---
@@ -228,6 +231,7 @@ UnitInventoryData (운영자가 시스템내에서 직접 만든 광고상품에
 
 **UI 구현**
 <img width="2312" height="1204" alt="image" src="https://github.com/user-attachments/assets/6878f4fc-20ed-4dcc-ab5a-4ced32baff9c" />
+<img width="2305" height="1180" alt="image" src="https://github.com/user-attachments/assets/3cb85585-80ec-4ee8-80b3-5e2ea11c3cef" />
 
 
 ---
