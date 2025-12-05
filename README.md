@@ -226,6 +226,10 @@ UnitInventoryData (운영자가 시스템내에서 직접 만든 광고상품에
 - Unit Inventory: ~수만 건/월 (일별 분배)
 - 처리 시간: 평균 10-30초
 
+**UI 구현**
+<img width="2312" height="1204" alt="image" src="https://github.com/user-attachments/assets/6878f4fc-20ed-4dcc-ab5a-4ced32baff9c" />
+
+
 ---
 
 ## 📊 Database Design
