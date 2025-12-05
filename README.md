@@ -70,7 +70,7 @@ django-cors-headers # CORS 처리
 ### Infra
 
 ```
-AWS             - EC2, S3, Route53
+AWS                - EC2, S3, Route53
 ```
 
 ---
