@@ -172,7 +172,6 @@ AWS                - EC2, S3, Route53
 
 # 2. 그룹 타겟팅 복합 비율 계산
 - 그룹 별 비중 * 일별 예측치 비율
-- 정규화를 통한 합 = 1 보장
 - 반올림 차이를 첫날에 보정
 ```
 
@@ -185,7 +184,7 @@ AWS                - EC2, S3, Route53
 **처리 규모**
 - Standard Inventory: ~수천 건/월
 - Unit Inventory: ~수만 건/월 (일별 분배)
-- 수만 건 단위 데이터도 수십 초 내 안정적 처리
+- 운영 환경에서 수만 건 데이터도 효율적으로 처리 가능
 
 **UI 구현**
 <img width="2312" height="1204" alt="image" src="https://github.com/user-attachments/assets/6878f4fc-20ed-4dcc-ab5a-4ced32baff9c" />
