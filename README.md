@@ -186,10 +186,6 @@ AWS                - EC2, S3, Route53
 - 판매치: ~수만 건/월 (일별 분배)
 - 운영 환경에서 수만 건 데이터도 효율적으로 처리 가능
 
-**UI 구현**
-<img width="2312" height="1204" alt="image" src="https://github.com/user-attachments/assets/6878f4fc-20ed-4dcc-ab5a-4ced32baff9c" />
-<img width="2305" height="1180" alt="image" src="https://github.com/user-attachments/assets/3cb85585-80ec-4ee8-80b3-5e2ea11c3cef" />
-
 ---
 
 ## 🎓 Technical Challenges Overcome
