@@ -91,27 +91,16 @@ AWS                - EC2, S3, Route53
 │   - Dashboard, Campaign, Inventory  │
 ├─────────────────────────────────────┤
 │            Service Layer            │
-│   - CampaignPurchaseService         │
-│   - CampaignUnitStatusAggregator    │
-│   - ExcelService                    │
-│   - MakeInventoryFromForecast       │
+│   - 구매 서비스                        │
+│   - 상태관리 서비스                     │
+│   - 엑셀 관리 서비스                    │
+│   - 구매 인벤토리 관리 서비스             │
 ├─────────────────────────────────────┤
 │          Model Layer (ORM)          │
-│   - Campaign, CampaignUnit, Ad      │
-│   - UnitInventoryData               │
 ├─────────────────────────────────────┤
 │         Data Layer (MySQL)          │
 └─────────────────────────────────────┘
 ```
-
-### 2. Key Services
-
-| Service | Size | Description |
-|---------|------|-------------|
-| `make_inventory_from_forecast_data.py` | 83KB | 매체별 일별 프로그램별 인벤토리 예측치, 판매가능 상품 인벤토리 변환 |
-| `campaign_purchase_service.py` | 123KB | 캠페인 구매 및 차감 프로세스 전체 관리 |
-| `excel_service.py` | 35KB | 복잡한 Excel 제안서 생성 |
-| `campaign_unit_status_aggregator.py` | 8KB | 광고 상태 집계 및 동기화 |
 
 ---
 
@@ -164,19 +153,6 @@ MediaMix 시트 (16개 컬럼)
 - 동적 데이터 기반 자동 레이아웃 생성
 - 전문 제안서 수준의 스타일링
 
-### 3. 트랜잭션 기반 안전한 구매 프로세스
-
-```python
-@transaction.atomic
-def process_campaign_purchase(self):
-    """
-    All-or-Nothing 보장
-    - 인벤토리 차감 실패 → 전체 롤백
-    - 광고 생성 실패 → 인벤토리 복구
-    - 상세한 에러 로깅
-    """
-```
-
 **안전장치**
 - 인벤토리 선차감 후 검증
 - Savepoint 활용한 부분 롤백
@@ -187,23 +163,21 @@ def process_campaign_purchase(self):
 **외부 데이터 → 판매 인벤토리 자동 전환**
 
 ```
-ForecastInventoryData (외부 제공)
+예측 인벤토리 데이터
   ↓
-[process_standard_inventory_load]
-  ├─ 파트별 타입 매핑 (SMR_PROGRAM → PROGRAM)
+  ├─ 파트별 타입 매핑
   ├─ meta_id별 그룹화 및 합산
   ├─ 변화율 자동 계산
   └─ Bulk Create/Update (2000건 청크)
   ↓
-StandardInventoryData (표준 인벤토리 전환 -> 판매 전, 수동 보정 및 확인을 위한 중간데이터)
+표준 인벤토리 전환 -> 판매 전, 수동 보정 및 확인을 위한 중간데이터
   ↓
-[process_unit_inventory_load]
   ├─ Forecast 비율 기반 일별 분배
-  ├─ CONTENTS/RANDOM/GROUP 타입별 처리
+  ├─ 타입별 처리
   ├─ 플랫폼별 인벤토리 생성
   └─ Raw SQL Upsert (최적화)
   ↓
-UnitInventoryData (운영자가 시스템내에서 직접 만든 광고상품에 인벤토리가 부여됨)
+판매 가능한 인벤토리
 ```
 
 **핵심 알고리즘**
@@ -233,192 +207,6 @@ UnitInventoryData (운영자가 시스템내에서 직접 만든 광고상품에
 **UI 구현**
 <img width="2312" height="1204" alt="image" src="https://github.com/user-attachments/assets/6878f4fc-20ed-4dcc-ab5a-4ced32baff9c" />
 <img width="2305" height="1180" alt="image" src="https://github.com/user-attachments/assets/3cb85585-80ec-4ee8-80b3-5e2ea11c3cef" />
-
-
----
-
-## 📊 Database Design
-
-### Core Tables
-```sql
-Campaign (캠페인)
-  └─ CampaignUnit (상품별 유닛)
-       ├─ Ad (플랫폼별 광고)
-       │    └─ ChildAd (타겟팅그룹별 하위 광고)
-       │
-       └─ UnitInventoryData (인벤토리 정보)
-            └─ UnitInventoryCampaignUnitData (차감 내역)
-```
-
-### Key Models (56개 Python 파일)
-
-**Campaign Management**
-- `campaign.py` - 캠페인 기본 정보
-- `campaign_unit.py` - 상품별 실행 유닛
-- `ad.py` - 플랫폼별 광고
-- `child_ad.py` - 타겟팅그룹별 하위 광고
-
-**Inventory System**
-- `unit_inventory_data.py` - 유닛별 인벤토리
-- `forecast_inventory_data.py` - 예측 인벤토리
-- `unit_inventory_campaign_unit_data.py` - 차감 내역
-
-**Targeting**
-- `targeting_group.py` - 타겟팅 그룹
-- `unit_platform_targeting_group.py` - 플랫폼별 타겟팅
-
-### Index Strategy
-```sql
--- 복합 인덱스 예시
-CREATE INDEX idx_inventory_lookup 
-ON unit_inventory_data(metaid, platform, date);
-
-CREATE INDEX idx_campaign_unit_status 
-ON campaign_unit(publish_request_status, updated_at);
-```
-
----
-
-## 🚀 Key Features Implementation
-
-### 1. 캠페인 구매 플로우
-```
-사용자 입력
-  ↓
-[Dashboard View] - AJAX POST
-  ↓
-[CampaignPurchaseService]
-  ├─ 인벤토리 검증
-  ├─ 인벤토리 차감
-  ├─ CampaignUnit 생성/수정
-  ├─ Ad 생성 (플랫폼별)
-  ├─ ChildAd 생성 (타겟팅그룹별)
-  └─ 결과 계층적 출력
-  ↓
-JSON Response (성공/실패)
-```
-
-### 2. 인벤토리 변환 및 관리
-```
-[외부 업체 데이터 수신]
-  ↓
-ForecastInventoryData 저장
-  ↓
-[Management Command: process_standard_inventory_load]
-  ├─ 파트별 타입 매핑 (6가지 → 4가지 타입)
-  ├─ Meta_id별 그룹화 및 합산
-  ├─ 변화율 계산 (prophet vs actual)
-  └─ Bulk Upsert (2000건/청크)
-  ↓
-StandardInventoryData (표준 인벤토리)
-  ↓
-[Management Command: process_unit_inventory_load]
-  ├─ Forecast 비율 계산 (일별 가중치)
-  ├─ CONTENTS 타겟팅 인벤토리 생성
-  ├─ RANDOM 인벤토리 집계 및 생성
-  ├─ GROUP 타겟팅 복합 비율 계산
-  └─ Raw SQL Upsert (일별 데이터)
-  ↓
-UnitInventoryData (판매 가능 인벤토리)
-  ↓
-[캠페인 구매 시]
-  ├─ 일별/플랫폼별 잔여 확인
-  ├─ 실시간 차감
-  └─ UnitInventoryCampaignUnitData 기록
-```
-
-### 3. 상태 동기화
-```
-하위 광고 상태 변경
-  ↓
-[CampaignUnitStatusAggregator]
-  ↓
-우선순위 기반 상태 결정
-  ↓
-CampaignUnit 상태 업데이트
-  ↓
-대시보드 반영
-```
-
----
-
-## 📈 Performance Optimizations
-
-### 1. Database Query Optimization
-```python
-# Before: N+1 쿼리 문제
-for unit in units:
-    unit.campaign  # 쿼리 발생
-    
-# After: select_related로 최적화
-units = CampaignUnit.objects.select_related('campaign')
-```
-
-### 2. Inventory Calculation Optimization
-```python
-# Before: 2번의 쿼리 (월별 총량, 일별 데이터)
-monthly_total = get_monthly_total()
-daily_data = get_daily_data()
-
-# After: 1번의 쿼리로 통합
-data = get_data_with_grouping()  # 50% 응답 시간 단축
-```
-
-### 3. Memory Optimization
-```python
-# 딕셔너리 컴프리헨션으로 간소화
-platform_map = {p.id: p.name for p in platforms}
-
-# 제너레이터 패턴 활용
-def iter_large_dataset():
-    for batch in queryset.iterator(chunk_size=1000):
-        yield process(batch)
-```
-
----
-
-## 🔐 Security & Reliability
-
-### Security Measures
-- ✅ SSH 포트 변경 (2222)
-- ✅ Docker exec 차단으로 무단 접근 방지
-- ✅ 환경변수 기반 설정 관리 (`.env`)
-- ✅ CORS 정책 적용
-
-### Reliability
-- ✅ 트랜잭션 기반 데이터 일관성
-- ✅ 상세한 에러 로깅 및 추적
-- ✅ Rollback 메커니즘
-- ✅ Health check 구현
-
----
-
-## 🐳 Docker Deployment
-
-### Multi-Stage Build
-```dockerfile
-# Python 3.12 Slim
-FROM python:3.12-slim-bullseye
-
-# Nginx + Gunicorn
-# Cron for scheduled tasks
-# Korean locale & timezone
-```
-
-### CI/CD Pipeline
-```bash
-# 1. Build & Push (AMD64 for production)
-docker buildx build --platform linux/amd64 \
-  -t registry.netinsight.co.kr/smap-manager:latest --push .
-
-# 2. Deploy to staging
-docker-compose pull
-docker-compose down
-docker-compose up -d
-
-# 3. Health check
-curl http://localhost/health
-```
 
 ---
 
