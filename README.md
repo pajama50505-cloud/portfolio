@@ -5,7 +5,6 @@
 [![Django](https://img.shields.io/badge/Django-5.1-092E20?style=flat&logo=django)](https://www.djangoproject.com/)
 [![Python](https://img.shields.io/badge/Python-3.12-3776AB?style=flat&logo=python)](https://www.python.org/)
 [![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?style=flat&logo=docker)](https://www.docker.com/)
-[![License](https://img.shields.io/badge/License-Proprietary-red.svg)](LICENSE)
 
 </div>
 
@@ -108,22 +107,6 @@ AWS                - EC2, S3, Route53
 
 ### 1. 복잡한 인벤토리 분배 알고리즘
 
-**3단계 분배 시스템**
-```python
-구매금액 (100%)
-  └─ 플랫폼별 분배 (균등 비율)
-      ├─ Platform A: 33.33%
-      ├─ Platform B: 33.33%
-      └─ Platform C: 33.34% (나머지 할당)
-          ├─ 타겟팅그룹별 분배 (가중치 비율)
-          ├─ Group 1: 40%
-          ├─ Group 2: 35%
-          └─ Group 3: 25%
-              └─ CO별 분배 (비율 설정)
-              ├─ CO A: 60%
-              └─ CO B: 40%
-```
-
 **핵심 로직**
 - 사용자의 구매 인벤토리를 구매상품 특성에 따라 세부적으로 분리하여 정교한 인벤토리 관리 및 타겟팅 운영
 - 나머지 처리를 통한 정확한 100% 분배
@@ -166,7 +149,7 @@ MediaMix 시트 (16개 컬럼)
 예측 인벤토리 데이터
   ↓
   ├─ 파트별 타입 매핑
-  ├─ meta_id별 그룹화 및 합산
+  ├─ 그룹화 및 합산
   ├─ 변화율 자동 계산
   └─ Bulk Create/Update (2000건 청크)
   ↓
@@ -183,12 +166,12 @@ MediaMix 시트 (16개 컬럼)
 **핵심 알고리즘**
 ```python
 # 1. Forecast 비율 기반 일별 분배
-- 외부 데이터에서 meta_id별, 일별 시간대별 합산
+- 외부 데이터에서 일별 시간대별 합산
 - 일별 비율 계산 (일별 인벤토리 / 총 인벤토리)
 - 가중평균으로 정확한 분배 (소수점 오차 누적 방지)
 
 # 2. 그룹 타겟팅 복합 비율 계산
-- meta_id별 비중 * 일별 forecast 비율
+- 그룹 별 비중 * 일별 예측치 비율
 - 정규화를 통한 합 = 1 보장
 - 반올림 차이를 첫날에 보정
 ```
@@ -202,7 +185,7 @@ MediaMix 시트 (16개 컬럼)
 **처리 규모**
 - Standard Inventory: ~수천 건/월
 - Unit Inventory: ~수만 건/월 (일별 분배)
-- 처리 시간: 평균 10-30초
+- 수만 건 단위 데이터도 수십 초 내 안정적 처리
 
 **UI 구현**
 <img width="2312" height="1204" alt="image" src="https://github.com/user-attachments/assets/6878f4fc-20ed-4dcc-ab5a-4ced32baff9c" />
@@ -232,7 +215,7 @@ MediaMix 시트 (16개 컬럼)
 **문제**: 
 - 외부 업체에서 받은 예측 데이터(Forecast)를 일별 판매 인벤토리로 자동 변환
 - 6가지 파트 타입을 4가지 플랫폼 타입으로 매핑 및 합산
-- meta_id별 일별 비율 계산 시 소수점 오차 누적
+- 그룹별 일별 비율 계산 시 소수점 오차 누적
 - 대용량 데이터(수만 건) 처리 시 성능 및 메모리 문제
 
 **해결**: 
