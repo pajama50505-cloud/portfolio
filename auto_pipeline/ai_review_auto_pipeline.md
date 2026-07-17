@@ -22,7 +22,7 @@ TV/OTT 광고 캠페인 관리 플랫폼(SMAP)의 배포 자동화 시스템.
 1. 환경 혼동 제거 — dev/prod 배포가 구조적으로 분리되어야 함
 2. 팀 전체가 배포 시점과 내용을 자동으로 공유받아야 함
 3. 롤백을 버튼 하나로 — 장애 상황에서 판단할 여력만 남기기
-4. 추가 인프라 없이 — 배포 빈도(주 1~2회)에 항상 켜져 있는 서버를 두는 건 낭비
+4. 배포 트리거 전용 서버 없이 — 배포 빈도(주 1~2회)에 상시 트리거 서버를 두는 건 낭비
 
 ---
 
@@ -163,3 +163,4 @@ smap-manager/
 | `DEPLOY_TOKEN_SECRET` | HMAC 서명 키 |
 | `BB_API_TOKEN` | Bitbucket Repository Access Token |
 | `BB_WORKSPACE` / `BB_REPO` | Bitbucket workspace / repo slug |
+
