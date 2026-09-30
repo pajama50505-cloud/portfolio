@@ -1,301 +1,54 @@
-# 📊 예측 수요 풀 기반 판매 데이터 자동화 관리 시스템
+# 김용우 | Backend Developer
 
-<div align="center">
+업무를 이해하고 데이터와 시스템을 연결하는 백엔드 개발자입니다.
 
-[![Django](https://img.shields.io/badge/Django-5.1-092E20?style=flat&logo=django)](https://www.djangoproject.com/)
-[![Python](https://img.shields.io/badge/Python-3.12-3776AB?style=flat&logo=python)](https://www.python.org/)
-[![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?style=flat&logo=docker)](https://www.docker.com/)
+2015년부터 광고 운영 시스템을 개발하고 운영해 왔습니다. 고객 요구사항을 직접 조율하며 장기 운영 시스템을 고도화했고, 
+통합 광고 플랫폼 신규 개발 프로젝트에서는 PL과 핵심 비즈니스 로직 개발을 담당했습니다. 
+이후 AI 코드리뷰와 배포 자동화, 이미지 벡터 검색 등 AI 기술을 실제 개발 업무와 백엔드 시스템에 연결했습니다.
 
-</div>
+## 주요 경험
 
-## 👨‍💼 Project Leadership & Development
+- 고객사 요구사항 정의부터 설계, 개발, 운영까지 이어지는 실서비스 경험
+- 광고 구매·인벤토리 차감·송출 데이터 생성 등 복잡한 업무 로직 구현
+- 대용량 로그 처리와 데이터 파이프라인 성능 개선
+- AI 코드리뷰, 테스트, 승인 배포와 롤백을 연결한 개발 워크플로 자동화
+- 이미지 특징 추출 모델과 벡터 검색 엔진을 결합한 검색 시스템 기술 검증
 
-**Role**: Project Lead (PL) & Lead Developer  
-**Responsibilities**:
-```
-- 전체 시스템 아키텍처 설계 및 기술 스택 선정
-- 핵심 비즈니스 로직 설계 및 구현 (코드 기여도 70%+)
-   ㄴ 매체별 예측 인벤토리 관리 및 판매인벤토리 전환
-   ㄴ 캠페인 구매 및 실제 광고 운영 데이터 세팅
-   ㄴ 외부연동 API 개발
-- 팀 리딩 및 코드 리뷰
-```
----
+## 프로젝트
 
-## 🎯 Project Overview
+| 프로젝트 | 기간 | 역할 | 주요 결과 |
+| --- | --- | --- | --- |
+| [AI 기반 코드리뷰 및 CI/CD 배포 자동화](projects/01-ai-code-review-cicd/) | 2026.06 - 2026.07 | CI/CD 설계·개발 / AI 코드리뷰 자동화 | 배포 개입 시간 약 15분에서 1분으로 단축, 타 개발팀 확대 |
+| [통합 광고 인벤토리 운영 및 광고 관리 시스템](projects/02-advertising-platform/) | 2025.05 - 2026.03 | PL / 핵심 비즈니스 로직 개발 | 기존 판매풀 대비 판매 가능 인벤토리 20% 이상 확대 |
+| [AI 모델 기반 이미지 유사도 검색 PoC](projects/03-image-similarity-search/) | 2026.04 - 2026.05 | AI 검색 시스템 설계 / 백엔드 개발 | 벡터 메모리 약 75% 절감, 검색 응답시간 100ms 이내 확인 |
+| [대용량 광고 로그 분석 시스템](projects/04-ad-log-analytics/) | 2024.03 - 2024.05 | 데이터 처리 파이프라인 설계 / 백엔드 개발 | 일 10GB 이상 처리, 기존 대비 분석 속도 30~40% 개선 |
 
-여러 매체에 동영상 광고 집행을 위한, 캠페인의 **기획 → 집행 → 모니터링** , 전체 생애주기를 관리하는 엔터프라이즈급 광고 운영 플랫폼
+## 경력 기반
 
-### Core Capabilities
-- 📊 **Campaign Management** - 다중 플랫폼 캠페인 통합 관리 및 실시간 모니터링
-- 📦 **Inventory System** - 일별/매체별 인벤토리 자동 분배 및 차감
-- 🎯 **Targeting Engine** - 프로그램/채널/키워드 기반 정교한 타겟팅
-- 📈 **Excel Integration** - 광고 제안서 자동 생성 (MediaMix, 타겟팅 시트)
-- 🔄 **Purchase Workflow** - 트랜잭션 기반 안전한 광고 구매 프로세스
+### 영상 광고 운영 청약 시스템 유지보수 및 고도화
 
----
+`2015.11 - 2025.05` · 풀스택 개발 / 서비스 운영 및 고도화
 
-## 🛠 Tech Stack
+- 광고, 소재, 타겟팅과 판매 청약을 통합 관리하는 고객사별 시스템 개발·운영
+- 고객사 요구사항 수집, 우선순위 조율 및 기능 개선 반영
+- 트래픽 급증과 장애 발생 시 실시간 대응
+- 레거시 리팩토링과 쿼리·인덱스 튜닝으로 평균 응답시간을 300ms에서 80ms 수준으로 개선
+- Python/Django 기반 점진적 마이그레이션과 관리자 UI/UX 리뉴얼
+- AWS 기반 서비스 모니터링과 인프라 운영
 
-### Backend
-```
-Django 5.1         - Modern Web Framework
-Python 3.12        - Core Language
-MySQL              - Primary Database
-Redis              - Caching & Session Store
-Gunicorn           - WSGI Application Server
-```
+## 기술
 
-### Frontend
-```
-JavaScript (ES6+)  - Client-side Logic
-jQuery             - DOM Manipulation & AJAX
-TailwindCSS        - Utility-first CSS Framework
-```
+| 구분 | 기술 |
+| --- | --- |
+| Backend | Python, Django, FastAPI, PHP |
+| Data | MySQL, Pandas, Parquet, Elasticsearch, Redis |
+| AI / Search | Claude CLI, DINOv2, kNN, HNSW |
+| Infrastructure | AWS EC2, S3, Route53, Lambda, SES, Docker, Linux |
+| DevOps | Bitbucket Pipelines, pytest, Shell Script, Sentry |
 
-### DevOps
-```
-Docker             - Containerization
-Nginx              - Reverse Proxy & Static Files
-Private Registry   - Container Image Management
-Cron               - Scheduled Task Automation
-```
+## PDF 포트폴리오
 
-### Key Libraries
-```python
-openpyxl           # Excel 처리 (복잡한 포맷팅 지원)
-django-mysql       # MySQL 고급 기능
-boto3              # AWS S3 Integration
-mysqlclient        # Native MySQL Driver
-django-cors-headers # CORS 처리
-```
+[김용우 개발 포트폴리오 PDF](김용우_개발포트폴리오.pdf)
 
-### Infra
-
-```
-AWS                - EC2, S3, Route53
-```
-
----
-
-## 🏗 System Architecture
-
-### 1. Layered Architecture
-```
-┌─────────────────────────────────────┐
-│         Presentation Layer          │
-│   (Django Templates + JavaScript)   │
-├─────────────────────────────────────┤
-│             View Layer              │
-│   - Dashboard, Campaign, Inventory  │
-├─────────────────────────────────────┤
-│            Service Layer            │
-│   - 구매 서비스                      │
-│   - 상태관리 서비스                  │
-│   - 엑셀 관리 서비스                 │
-│   - 구매 인벤토리 관리 서비스         │
-├─────────────────────────────────────┤
-│          Model Layer (ORM)          │
-├─────────────────────────────────────┤
-│         Data Layer (MySQL)          │
-└─────────────────────────────────────┘
-```
-
----
-
-## 💡 Technical Highlights
-
-### 1. 복잡한 인벤토리 분배 알고리즘
-
-**핵심 로직**
-- 사용자의 구매 인벤토리를 구매상품 특성에 따라 세부적으로 분리하여 정교한 인벤토리 관리 및 타겟팅 운영
-- 나머지 처리를 통한 정확한 100% 분배
-- 소수점 오차 방지 알고리즘
-
-### 2. Excel 제안서 자동 생성 시스템
-
-**복잡한 Excel 구조 처리**
-```
-시트 (16개 컬럼)
-├─ 캠페인 정보 (병합 셀)
-├─ 상품 정보 (다중 행)
-├─ 자동 계산식
-│   ├─ 예상노출수
-│   ├─ 예상클릭수
-│   └─ 예상조회수
-└─ TOTAL 합계 (수식 기반)
-
-큐레이션타겟팅 시트
-├─ 프로그램 타겟팅 (방송사별)
-├─ 유튜브 채널 타겟팅
-└─ 맞춤 키워드
-```
-
-**기술적 난이도**
-- openpyxl을 활용한 병합 셀, 조건부 서식, 계산식 처리
-- 동적 데이터 기반 자동 레이아웃 생성
-- 전문 제안서 수준의 스타일링
-
-**안전장치**
-- 인벤토리 선차감 후 검증
-- Savepoint 활용한 부분 롤백
-- 계층적 결과 출력으로 디버깅 용이
-
-### 4. 인벤토리 데이터 변환 파이프라인
-
-**외부 데이터 → 판매 인벤토리 자동 전환**
-
-```
-예측 인벤토리 데이터
-  ↓
-  ├─ 파트별 타입 매핑
-  ├─ 그룹화 및 합산
-  ├─ 변화율 자동 계산
-  └─ Bulk Create/Update (2000건 청크)
-  ↓
-표준 인벤토리 전환 -> 판매 전, 수동 보정 및 확인을 위한 중간데이터
-  ↓
-  ├─ 예측 비율 기반 일별 분배
-  ├─ 타입별 처리
-  ├─ 플랫폼별 인벤토리 생성
-  └─ Raw SQL Upsert (최적화)
-  ↓
-판매 가능한 인벤토리
-```
-
-**핵심 알고리즘**
-```python
-# 1. 예측 비율 기반 일별 분배
-- 외부 데이터에서 일별 시간대별 합산
-- 일별 비율 계산 (일별 인벤토리 / 총 인벤토리)
-- 가중평균으로 정확한 분배 (소수점 오차 누적 방지)
-
-# 2. 그룹 타겟팅 복합 비율 계산
-- 그룹 별 비중 * 일별 예측치 비율
-- 반올림 차이를 첫날에 보정
-```
-
-**성능 최적화**
-- Django Management Command로 백그라운드 처리
-- Raw SQL Upsert로 대량 데이터 처리
-- 청크 단위 Iterator 사용 (메모리 효율)
-- 상태 플래그로 중복 실행 방지
-
-**처리 규모**
-- 기준치: ~수천 건/월
-- 판매치: ~수만 건/월 (일별 분배)
-- 운영 환경에서 수만 건 데이터도 효율적으로 처리 가능
-
----
-
-## 🎓 Technical Challenges Overcome
-
-### 1. 복잡한 분배 알고리즘 설계
-**문제**: 3단계 분배 시 소수점 오차로 인한 합계 불일치  
-**해결**: 소수점 나머지를 가장 점수가 높은 항목에 할당
-
-### 2. 대용량 Excel 처리
-**문제**: 16개 컬럼, 다중 시트, 복잡한 포맷팅  
-**해결**: openpyxl의 고급 기능 활용 + 메모리 최적화
-
-### 3. 트랜잭션 롤백 시나리오
-**문제**: 부분 실패 시 데이터 정합성 문제  
-**해결**: Django의 `transaction.atomic`과 Savepoint 활용
-
-### 4. 실시간 상태 동기화
-**문제**: 수천 개 광고의 상태를 실시간 집계  
-**해결**: 우선순위 기반 알고리즘 + 배치 처리 조합
-
-### 5. 외부 데이터의 판매 인벤토리 변환
-**문제**: 
-- 예측 데이터를 일별 판매 인벤토리로 자동 변환
-- 6가지 파트 타입을 4가지 플랫폼 타입으로 매핑 및 합산
-- 그룹별 일별 비율 계산 시 소수점 오차 누적
-- 대용량 데이터(수만 건) 처리 시 성능 및 메모리 문제
-
-**해결**: 
-- **2단계 변환 파이프라인 구축**
-  - Step 1: Forecast → Standard (파트 매핑, 그룹화, 변화율 계산)
-  - Step 2: Standard → Unit (일별 분배, 타입별 처리, Raw SQL Upsert)
-- **정교한 비율 계산 알고리즘**
-  - 일별 forecast 비율을 가중평균으로 계산
-  - 누적 오차를 다음 날짜에 반영하여 정확도 향상
-  - 최종 나머지는 비율이 가장 높은 날에 할당
-- **성능 최적화**
-  - Django ORM Bulk Create/Update
-  - Raw SQL INSERT ON DUPLICATE KEY UPDATE
-  - Iterator를 통한 청크 단위 처리
-  - 상태 플래그로 동시 실행 방지
-
-**성과**: 수만 건의 데이터를 10-30초 내 안정적으로 처리
-
----
-
-## 🎯 Skills Demonstrated
-
-### Backend Development
-- ✅ Django ORM 고급 활용 (select_related, prefetch_related)
-- ✅ 복잡한 비즈니스 로직 설계 및 구현
-- ✅ Service Layer Pattern 적용
-- ✅ 트랜잭션 처리 및 에러 핸들링
-
-### System Design
-- ✅ Layered Architecture 설계
-- ✅ Database 스키마 설계 및 최적화
-- ✅ 복잡한 알고리즘 구현 (분배, 집계, 비율 계산)
-- ✅ 확장 가능한 구조 설계
-
-### Data Pipeline & ETL
-- ✅ 외부 데이터 자동 변환 파이프라인 구축
-- ✅ Django Management Command 활용
-- ✅ 대용량 데이터 Bulk 처리 (Raw SQL Upsert)
-- ✅ 청크 단위 Iterator 패턴으로 메모리 최적화
-- ✅ 정교한 비율 계산 알고리즘 (가중평균, 오차 누적 방지)
-
-### DevOps
-- ✅ Docker 컨테이너화
-- ✅ CI/CD 파이프라인 구축
-- ✅ Nginx + Gunicorn 설정
-- ✅ Private Registry 운영
-
-### Code Quality
-- ✅ DRY 원칙 적용
-- ✅ 관심사 분리 (Separation of Concerns)
-- ✅ 재사용 가능한 컴포넌트 설계
-- ✅ 상세한 로깅 및 디버깅 시스템
-
----
-
-## 📚 Key Learnings
-
-1. **Enterprise-level 시스템 설계 경험**
-   - 복잡한 도메인 로직을 명확한 레이어로 분리
-   - 확장성과 유지보수성을 고려한 아키텍처
-
-2. **Performance Optimization**
-   - Database 쿼리 최적화로 50% 성능 향상
-   - 메모리 효율적인 데이터 처리
-   - Raw SQL과 ORM의 적절한 조합
-
-3. **Data Pipeline Engineering**
-   - 외부 시스템 데이터의 안정적인 변환 및 적재
-   - 수학적 정확도를 요구하는 비율 계산 알고리즘
-   - 대용량 배치 처리 최적화 기법
-
-4. **Team Leadership**
-   - 코드 리뷰 및 기술 가이드
-   - 개발 표준 및 컨벤션 수립
-
-5. **Problem Solving**
-   - 복잡한 비즈니스 요구사항의 기술적 구현
-   - 다양한 엣지 케이스 처리
-
----
-
-## 📝 Notes
-
-- 이 프로젝트는 실제 운영 중인 상용 시스템입니다
-- 민감한 정보는 제외하고 기술적 내용만 공개합니다
-
----
+PDF에는 각 프로젝트의 처리 흐름, 설계 판단과 구현 범위를 시각적으로 정리했습니다.
 
